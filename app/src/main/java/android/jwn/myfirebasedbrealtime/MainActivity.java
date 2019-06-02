@@ -3,6 +3,7 @@ package android.jwn.myfirebasedbrealtime;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,8 +13,11 @@ import android.widget.EditText;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -36,9 +40,22 @@ public class MainActivity extends AppCompatActivity {
         edt_title = (EditText)findViewById(R.id.edt_title);
         btn_post = (Button)findViewById(R.id.btn_post);
         recyclerView = (RecyclerView)findViewById(R.id.recycler_vew);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("FB_RT");
+
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                displayComment();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
 
         btn_post.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,6 +67,13 @@ public class MainActivity extends AppCompatActivity {
 
         displayComment();
 
+    }
+
+    @Override
+    protected void onStop() {
+        if(adapter !=null)
+            adapter.stopListening();
+        super.onStop();
     }
 
     private void postComment() {

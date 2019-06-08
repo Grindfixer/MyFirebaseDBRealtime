@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
         EditText edt_title,edt_content;
         Button btn_post;
         RecyclerView recyclerView;
+
     //Firebase
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
